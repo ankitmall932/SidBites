@@ -7,7 +7,7 @@ export default function ThemeButton ()
 {
     const { theme, setTheme } = useTheme();
     return (
-        <button onClick={ () => setTheme( theme === 'dark' ? 'light' : 'dark' ) } className={ `p-2 border border-gray-300 rounded-2xl shadow-2xl  ${ theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200' }` }>
+        <button onClick={ () => setTheme( theme === 'dark' ? 'light' : 'dark' ) } className={ `p-2 border cursor-pointer border-gray-300 rounded-2xl shadow-2xl  ${ theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200' }` }>
             { theme === 'dark' ? <Sun /> : <Moon /> }
         </button>
     );

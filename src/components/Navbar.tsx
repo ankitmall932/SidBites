@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import ThemeButton from "./Theme/Button";
+import Authentication from "./auth/authentication";
 
 export default function Navbar ()
 {
@@ -16,7 +17,7 @@ export default function Navbar ()
             </Link>
             <div className="hidden items-center gap-5 lg:flex">
                 <ThemeButton />
-                Login
+                <Authentication />
             </div>
             <div className=" lg:hidden flex flex-row">
                 <ThemeButton />
@@ -31,8 +32,7 @@ export default function Navbar ()
                 </button>
             </div>
             { menuOpen && (
-                <div id="mobile-navigation" className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 flex flex-col gap-2 rounded-2xl border border-white/30 bg-white/95 p-4 shadow-xl backdrop-blur-2xl lg:hidden">
-                    <div>Login</div>
+                <div id="mobile-navigation" className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 flex flex-col gap-2 rounded-2xl border border-white/30 dark:bg-gray-600 dark:text-white bg-white/95 p-4 shadow-xl backdrop-blur-2xl lg:hidden">
                 </div>
             ) }
         </div>
