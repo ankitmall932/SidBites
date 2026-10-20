@@ -12,7 +12,7 @@ export default async function ResetPasswordPage ( { searchParams }: ResetPasswor
     const hasError = typeof params.error === "string";
 
     return (
-        <main className="mx-auto flex w-full max-w-lg flex-col gap-4 rounded-2xl bg-white p-6 shadow-lg">
+        <main className="mx-auto flex w-full max-w-lg flex-col gap-4 rounded-2xl bg-white text-black dark:bg-gray-800 dark:text-white p-6 shadow-lg">
             <h1 className="text-2xl font-semibold">Reset password</h1>
             { token && !hasError ? (
                 <ResetPasswordForm token={ token } />

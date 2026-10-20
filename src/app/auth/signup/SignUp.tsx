@@ -48,13 +48,13 @@ export default function SignUp ()
                 </div>
                 <div className="w-full sm:w-77  flex flex-col gap-2">
                     <div>
-                        <input className="bg-gray-100 p-3 w-full rounded-2xl " placeholder="Please enter your name" name="name" type="text" autoComplete="name" required minLength={ 2 } />
+                        <input className="bg-gray-100 text-black dark:bg-gray-800 dark:text-white p-3 w-full rounded-2xl " placeholder="Please enter your name" name="name" type="text" autoComplete="name" required minLength={ 2 } />
                     </div>
                     <div>
-                        <input className="bg-gray-100 p-3 w-full rounded-2xl " placeholder="Please enter your email" name="email" type="email" autoComplete="email" required />
+                        <input className="bg-gray-100 text-black dark:bg-gray-800 dark:text-white p-3 w-full rounded-2xl " placeholder="Please enter your email" name="email" type="email" autoComplete="email" required />
                     </div>
                     <div>
-                        <input className="bg-gray-100 p-3 w-full rounded-2xl " placeholder="Please enter your password" name="password" type="password" autoComplete="new-password" required minLength={ 8 } />
+                        <input className="bg-gray-100 text-black dark:bg-gray-800 dark:text-white p-3 w-full rounded-2xl " placeholder="Please enter your password" name="password" type="password" autoComplete="new-password" required minLength={ 8 } />
                     </div>
                     <div className="flex items-center justify-end">
                         <button className={ `bg-sky-500 p-2 rounded-2xl text-white w-fit cursor-pointer ${ isPending && 'opacity-50 cursor-not-allowed' }` } type="submit" disabled={ isPending }>

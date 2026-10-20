@@ -48,10 +48,10 @@ export default function SignIn ()
                 </div>
                 <div className="w-full sm:w-77  flex flex-col gap-2">
                     <div>
-                        <input className="bg-gray-100 p-3 w-full rounded-2xl " placeholder="Please enter your email" name="email" type="email" autoComplete="email" required />
+                        <input className="bg-gray-100 text-black dark:bg-gray-800 dark:text-white p-3 w-full rounded-2xl " placeholder="Please enter your email" name="email" type="email" autoComplete="email" required />
                     </div>
                     <div>
-                        <input className="bg-gray-100 p-3 w-full rounded-2xl " placeholder="Please enter your password" name="password" type="password" autoComplete="new-password" required minLength={ 8 } />
+                        <input className="bg-gray-100 text-black dark:bg-gray-800 dark:text-white p-3 w-full rounded-2xl " placeholder="Please enter your password" name="password" type="password" autoComplete="new-password" required minLength={ 8 } />
                     </div>
                     <div className="flex justify-end">
                         <Link className="text-sm text-blue-600 underline" href="/auth/forgot-password">
