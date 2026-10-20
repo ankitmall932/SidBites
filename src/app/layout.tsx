@@ -4,7 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/Theme/theme-provider";
-import { ClerkProvider } from "@clerk/nextjs";
+import { getSession } from "@/lib/auth/getSession";
 
 const geistSans = Geist( {
   variable: "--font-geist-sans",
@@ -21,8 +21,9 @@ export const metadata: Metadata = {
   description: "SidBites web for food delivery ",
 };
 
-export default function RootLayout ( { children }: LayoutProps<"/"> )
+export default async function RootLayout ( { children }: LayoutProps<"/"> )
 {
+  const session = await getSession();
   return (
     <html
       lang="en"
@@ -30,19 +31,17 @@ export default function RootLayout ( { children }: LayoutProps<"/"> )
       className={ `${ geistSans.variable } ${ geistMono.variable } h-full antialiased` }
     >
       <body className="min-h-screen flex flex-col">
-        <ClerkProvider>
-          <ThemeProvider>
-            <div className="fixed  top-4  sm:px-10 px-2 w-full">
-              <Navbar />
-            </div>
-            <div className="sm:px-10 px-2 pt-25 h-full w-full pb-10 flex-1">
-              { children }
-            </div>
-            <div className="pb-5 sm:px-10 px-2 w-full">
-              <Footer />
-            </div>
-          </ThemeProvider>
-        </ClerkProvider>
+        <ThemeProvider>
+          <div className="fixed  top-4  sm:px-10 px-2 w-full">
+            <Navbar session={ session } />
+          </div>
+          <div className="sm:px-10 px-2 pt-25 h-full w-full pb-10 flex-1">
+            { children }
+          </div>
+          <div className="pb-5 sm:px-10 px-2 w-full">
+            <Footer />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
