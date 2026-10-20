@@ -12,7 +12,7 @@ export default async function EditNamePage ()
     }
 
     return (
-        <main className="mx-auto flex w-full max-w-lg flex-col gap-6 rounded-2xl bg-white p-6 shadow-lg">
+        <main className="mx-auto flex w-full max-w-lg flex-col gap-6 rounded-2xl bg-white text-black dark:bg-gray-900 dark:text-white p-6 shadow-lg">
             <h1 className="text-2xl font-semibold">Edit name</h1>
             <EditNameForm currentName={ session.user.name } />
             <Link href="/user/account" className="w-fit text-sky-700 underline">
