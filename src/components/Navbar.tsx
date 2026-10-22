@@ -1,7 +1,6 @@
 'use client';
 
 import { auth } from "@/lib/auth/auth";
-import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,7 +10,7 @@ import ThemeButton from "./Theme/Button";
 type Session = typeof auth.$Infer.Session;
 
 const navItems = [
-    { label: <Heart />, href: "/user/wishlist" },
+    { label: '', href: "" },
 ];
 
 export default function Navbar ( { session }: { session: Session | null; } )
@@ -27,7 +26,7 @@ export default function Navbar ( { session }: { session: Session | null; } )
         : "hover:text-blue-500 hover:underline hover:underline-offset-4";
     return (
         <nav className="relative flex min-h-15 w-full items-center justify-between rounded-2xl border border-white/30 bg-white/40 px-4 shadow-[0_0_25px_rgba(0,0,0,0.08)] backdrop-blur-2xl sm:px-5">
-            <Link href={ "/" } aria-label="TaskHub home">
+            <Link href={ user?.admin ? '/admin/dashboard' : '/' } aria-label="TaskHub home">
                 <Image src="/SidLogo.png" width={ 150 } height={ 40 } alt="TaskHub" priority className="h-auto w-30 sm:w-37.5" />
             </Link>
             <div className="flex flex-row gap-5">
@@ -40,7 +39,7 @@ export default function Navbar ( { session }: { session: Session | null; } )
                                     { item.label }
                                 </Link>
                             ) ) }
-                            <Link href="/user/account" aria-label="Open account" className="inline-flex items-center justify-center overflow-hidden rounded-full shadow-sm ring-2 ring-white/80" >
+                            <Link href={ user.admin ? `/admin/account` : `/user/account` } aria-label="Open account" className="inline-flex items-center justify-center overflow-hidden rounded-full shadow-sm ring-2 ring-white/80" >
                                 { image ? (
                                     <Image src={ image } alt="Account avatar" width={ 40 } height={ 40 } className="h-10 w-10 rounded-full object-cover" />
                                 ) : (
