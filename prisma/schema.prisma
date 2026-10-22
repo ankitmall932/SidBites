@@ -11,6 +11,7 @@ datasource db {
 model User {
   id            String    @id
   name          String
+  admin         Boolean @default(false)
   email         String
   emailVerified Boolean   @default(false)
   image         String?
@@ -18,7 +19,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-
+  types         Types[]
+  items         Items[]
   @@unique([email])
   @@map("user")
 }
@@ -69,4 +71,46 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Types {
+  id  String @id @default(uuid()) @db.Uuid
+  name String
+  image String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  items Items[]
+  @@index([userId])
+  @@map("types")
+}
+
+enum Unit {
+  KG
+  G
+  L
+  ML
+  PIECE
+  FULL
+  HALF
+}
+
+model Items {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  price Decimal @db.Decimal(10,2)
+  quantity Decimal 
+  unit Unit
+  stockQuantity Int @default(0)
+  discount Decimal?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId String
+  typeId String  @db.Uuid
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  type Types @relation(fields: [typeId],references: [id],onDelete: Cascade)
+
+  @@index([userId])
+  @@map("items")
 }
