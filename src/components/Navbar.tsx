@@ -9,8 +9,22 @@ import ThemeButton from "./Theme/Button";
 
 type Session = typeof auth.$Infer.Session;
 
-const navItems = [
-    { label: '', href: "" },
+const adminItems = [
+    { label: "Types", href: "/admin/type" },
+    { label: "Items", href: "/admin/items" },
+];
+
+const publicItems = [
+    { label: "Home", href: "/" },
+    { label: "Menu", href: "/menu" },
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
+];
+
+const userItems = [
+    { label: "Wishlist", href: "/user/wishlist" },
+    { label: "Cart", href: "/user/cart" },
+    { label: "Orders", href: "/user/orders" },
 ];
 
 export default function Navbar ( { session }: { session: Session | null; } )
@@ -20,13 +34,17 @@ export default function Navbar ( { session }: { session: Session | null; } )
     const userName = session?.user?.name?.[ 0 ]?.toUpperCase() ?? 'U';
     const image = session?.user?.image;
     const user = session?.user;
+    const isAdmin = user?.admin === true;
+    const accountHref = isAdmin ? "/admin/account" : "/user/account";
+    const items = isAdmin? adminItems : user ? [ ...publicItems, ...userItems ] : publicItems;
 
     const linkClass = ( href: string ) => pathname === href
         ? "text-blue-500 underline underline-offset-4"
         : "hover:text-blue-500 hover:underline hover:underline-offset-4";
+
     return (
         <nav className="relative flex min-h-15 w-full items-center justify-between rounded-2xl border border-white/30 bg-white/40 px-4 shadow-[0_0_25px_rgba(0,0,0,0.08)] backdrop-blur-2xl sm:px-5">
-            <Link href={ user?.admin ? '/admin/dashboard' : '/' } aria-label="TaskHub home">
+            <Link href={ isAdmin ? "/admin/dashboard" : "/" } aria-label="SidBites home">
                 <Image src="/SidLogo.png" width={ 150 } height={ 40 } alt="TaskHub" priority className="h-auto w-30 sm:w-37.5" />
             </Link>
             <div className="flex flex-row gap-5">
@@ -34,12 +52,12 @@ export default function Navbar ( { session }: { session: Session | null; } )
                 <div className="hidden items-center gap-5 lg:flex">
                     { user ? (
                         <>
-                            { navItems.map( ( item ) => (
+                            { items.map( ( item ) => (
                                 <Link key={ item.href } className={ linkClass( item.href ) } href={ item.href }>
                                     { item.label }
                                 </Link>
                             ) ) }
-                            <Link href={ user.admin ? `/admin/account` : `/user/account` } aria-label="Open account" className="inline-flex items-center justify-center overflow-hidden rounded-full shadow-sm ring-2 ring-white/80" >
+                            <Link href={ accountHref } aria-label="Open account" className="inline-flex items-center justify-center overflow-hidden rounded-full shadow-sm ring-2 ring-white/80" >
                                 { image ? (
                                     <Image src={ image } alt="Account avatar" width={ 40 } height={ 40 } className="h-10 w-10 rounded-full object-cover" />
                                 ) : (
@@ -51,6 +69,11 @@ export default function Navbar ( { session }: { session: Session | null; } )
                         </>
                     ) : (
                         <>
+                            { items.map( ( item ) => (
+                                <Link key={ item.href } className={ linkClass( item.href ) } href={ item.href }>
+                                    { item.label }
+                                </Link>
+                            ) ) }
                             <Link className="rounded-lg bg-gray-300 px-3 py-2 font-semibold text-black" href="/auth/login">Login</Link>
                             <Link className="rounded-lg bg-black px-3 py-2 font-semibold text-white" href="/auth/signup">Sign Up</Link>
                         </>
@@ -77,11 +100,11 @@ export default function Navbar ( { session }: { session: Session | null; } )
                     <div id="mobile-navigation" className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 flex flex-col gap-2 rounded-2xl border border-white/30 bg-white/95 p-4 shadow-xl backdrop-blur-2xl lg:hidden">
                         { user ? (
                             <>
-                                { navItems.map( ( item ) => (
+                                { items.map( ( item ) => (
                                     <Link key={ item.href } className={ `rounded-lg px-3 py-2 ${ linkClass( item.href ) }` } href={ item.href }
                                         onClick={ () => setMenuOpen( false ) } >{ item.label } </Link>
                                 ) ) }
-                                <Link href="/user/account" className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-black/5"
+                                <Link href={ accountHref } className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-black/5"
                                     onClick={ () => setMenuOpen( false ) } >
                                     { image ? (
                                         <Image src={ image } alt="" width={ 36 } height={ 36 } className="h-9 w-9 rounded-full object-cover" />
@@ -95,6 +118,10 @@ export default function Navbar ( { session }: { session: Session | null; } )
                             </>
                         ) : (
                             <>
+                                { items.map( ( item ) => (
+                                    <Link key={ item.href } className={ `rounded-lg px-3 py-2 ${ linkClass( item.href ) }` } href={ item.href }
+                                        onClick={ () => setMenuOpen( false ) } >{ item.label }</Link>
+                                ) ) }
                                 <Link className="rounded-lg bg-gray-200 px-3 py-2 text-center font-semibold text-black" href="/auth/login"
                                     onClick={ () => setMenuOpen( false ) } >Login</Link>
                                 <Link className="rounded-lg bg-black px-3 py-2 text-center font-semibold text-white" href="/auth/signup"
