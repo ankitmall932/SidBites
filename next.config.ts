@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     rules: {
       "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
+        loaders: [ "@tailwindcss/turbopack" ],
         as: "*.css",
       },
     },
@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.githubusercontent.com" },
       { protocol: "https", hostname: "gravatar.com" },
       { protocol: "https", hostname: "*.gravatar.com" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "*.cloudinary.com" },
     ],
   },
 };

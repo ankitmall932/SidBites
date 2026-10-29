@@ -2,11 +2,13 @@
 
 import { getSession } from "@/lib/auth/getSession";
 import { prisma } from "@/lib/db/prisma";
+import cloudinary from "@/lib/storage/cloudinary";
 import { createTypeSchema, editDetailTypeSchema } from "@/lib/validations/types";
 import { redirect } from "next/navigation";
 
 export const createType = async ( _prevState: { success: boolean, message: string; }, formData: FormData ) =>
 {
+    let uploadImageId: string | undefined;
     try
     {
         const session = await getSession();
@@ -18,7 +20,8 @@ export const createType = async ( _prevState: { success: boolean, message: strin
             };
         }
         const val = {
-            name: formData.get( 'name' )
+            name: formData.get( 'name' ),
+            image: formData.get( 'image' )
         };
         const validation = createTypeSchema.safeParse( val );
         if ( !validation.success )
@@ -28,14 +31,45 @@ export const createType = async ( _prevState: { success: boolean, message: strin
                 message: validation.error.issues[ 0 ].message ?? 'Please enter the valid name'
             };
         }
+        if ( !( val.image instanceof File ) || val.image.size === 0 )
+        {
+            return {
+                success: false,
+                message: 'Please select an image'
+            };
+        }
+        if ( val.image.size > 5 * 1024 * 1024 )
+        {
+            return {
+                success: false,
+                message: 'Image must be under 5 mb'
+            };
+        }
+        const imageData = Buffer.from( await val.image.arrayBuffer() ).toString( 'base64' );
+        const uploadImage = await cloudinary.uploader.upload(
+            `data:${ val.image.type };base64,${ imageData }`,
+            {
+                folder: 'sidbites/items',
+                resource_type: 'image'
+            }
+        );
+        uploadImageId = uploadImage.public_id;
         await prisma.types.create( {
             data: {
                 name: validation.data.name,
-                userId: session.user.id
+                userId: session.user.id,
+                imageId: uploadImage.public_id,
+                imageUrl: uploadImage.secure_url
             }
         } );
     } catch ( error )
     {
+        if ( uploadImageId )
+        {
+            await cloudinary.uploader.destroy(
+                uploadImageId
+            );
+        }
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Unable to create Types'
