@@ -7,8 +7,8 @@ export default async function Password ()
     const accounts = await auth.api.listUserAccounts( { headers: await headers() } );
     const hasCredentialAccount = accounts.some( ( account ) => account.providerId === "credential" );
     const href = hasCredentialAccount
-        ? "/user/account/change-password"
-        : "/user/account/set-password";
+        ? "/admin/account/change-password"
+        : "/admin/account/set-password";
     const label = hasCredentialAccount ? "Change password" : "Set password";
 
     return (

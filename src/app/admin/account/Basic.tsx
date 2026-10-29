@@ -29,7 +29,7 @@ export default function BasicPart ( { session }: { session: Session | null; } )
                     <div  >{ session?.user.email }</div>
                 </div>
                 <div className=" w-full flex flex-wrap gap-5  mt-10 items-center justify-around h-fit p-2">
-                    <Link href="/user/account/edit-name" className="rounded-lg bg-gray-500 p-2 text-white">
+                    <Link href="/admin/account/edit-name" className="rounded-lg bg-gray-500 p-2 text-white">
                         Edit name
                     </Link>
                     <Password />
