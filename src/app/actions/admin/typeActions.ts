@@ -144,6 +144,8 @@ export const getDetailType = async ( id: string ) =>
 
 export const editDetailType = async ( id: string, _prevState: { success: boolean, message: string; }, formData: FormData ) =>
 {
+    let imageUrl: string | null = null;
+    let imageId: string | null = null;
     try
     {
         const session = await getSession();
@@ -155,8 +157,37 @@ export const editDetailType = async ( id: string, _prevState: { success: boolean
             };
         }
         const val = {
-            name: formData.get( 'name' )
+            name: formData.get( 'name' ),
+            image: formData.get( 'image' )
         };
+        const type = await prisma.types.findFirst( {
+            where: {
+                id,
+                userId: session.user.id
+            }
+        } );
+        if ( !type )
+        {
+            return {
+                success: false,
+                message: 'No type found for the given id'
+            };
+        }
+        imageUrl = type.imageUrl;
+        imageId = type.imageId;
+        if ( val.image instanceof File && val.image.size > 0 )
+        {
+            const imageData = Buffer.from( await val.image.arrayBuffer() ).toString( 'base64' );
+            const uploadImage = await cloudinary.uploader.upload(
+                `data:${ val.image.type };base64,${ imageData }`,
+                {
+                    folder: 'sidbites/items',
+                    resource_type: 'image'
+                }
+            );
+            imageUrl = uploadImage.secure_url;
+            imageId = uploadImage.public_id;
+        }
         const validation = editDetailTypeSchema.safeParse( val );
         if ( !validation.success )
         {
@@ -171,11 +202,23 @@ export const editDetailType = async ( id: string, _prevState: { success: boolean
                 id
             },
             data: {
-                name: validation.data.name
+                name: validation.data.name,
+                imageId,
+                imageUrl
             }
         } );
+        if ( imageId !== type.imageId && type.imageId )
+        {
+            await cloudinary.uploader.destroy( type.imageId );
+        }
     } catch ( error )
     {
+        if ( imageId )
+        {
+            await cloudinary.uploader.destroy(
+                imageId
+            );
+        }
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Unable to edit the type'
@@ -196,12 +239,28 @@ export const deleteType = async ( id: string ) =>
                 message: 'Unauthorized'
             };
         }
+        const type = await prisma.types.findUnique( {
+            where: {
+                id
+            }
+        } );
+        if ( !type )
+        {
+            return {
+                success: false,
+                message: 'No type found for the given id'
+            };
+        }
         await prisma.types.delete( {
             where: {
                 userId: session.user.id,
                 id
             }
         } );
+        if ( type.imageId )
+        {
+            await cloudinary.uploader.destroy( type.imageId );
+        }
     } catch ( error )
     {
         return {

@@ -1,13 +1,15 @@
 'use client';
 
 import { createType } from "@/app/actions/admin/typeActions";
+import Image from "next/image";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 const inputClass = "w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 dark:border-gray-600 dark:focus:ring-orange-950";
 
 export default function Create ()
 {
+    const [ preview, setPreview ] = useState( '' );
     const [ state, formAction, isPending ] = useActionState( createType, { success: false, message: '' } );
     return (
         <div className="h-full w-full flex justify-center items-center ">
@@ -28,7 +30,19 @@ export default function Create ()
                     </div>
                     <div>
                         <label htmlFor="image" className="mb-1 block text-sm font-medium">Image</label>
-                        <input id="image" className={ inputClass } name="image" type="file" required />
+                        <input id="image" className={ inputClass } name="image" type="file" required onChange={ ( e ) =>
+                        {
+                            const file = e.target.files?.[ 0 ];
+                            if ( file )
+                            {
+                                setPreview( URL.createObjectURL( file ) );
+                            }
+                        } } />
+                    </div>
+                    <div>
+                        { preview && (
+                            <Image src={ preview } alt="preview image" width={ 256 } height={ 256 } className="h-40 w-40 rounded-lg object-cover" />
+                        ) }
                     </div>
                     <div className="flex items-center justify-between pt-2">
                         <Link href={ `/admin/type` } className="text-sm text-gray-600 hover:underline dark:text-gray-300">

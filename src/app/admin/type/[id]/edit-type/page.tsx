@@ -11,7 +11,7 @@ export default async function page ( { params }: { params: Promise<{ id: string;
     }
     return (
         <div>
-            <EditForm id={ id } name={ response.data.name } />
+            <EditForm id={ id } name={ response.data.name } image={ response.data.imageUrl } />
         </div>
     );
 }
