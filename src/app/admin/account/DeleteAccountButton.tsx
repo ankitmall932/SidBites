@@ -39,11 +39,11 @@ export default function DeleteAccountButton ()
                 onClick={ handleDelete }
                 type="button"
                 disabled={ isDeleting }
-                className="rounded-lg bg-red-600 cursor-pointer p-2 text-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-xl border border-red-200 px-3 py-2.5 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950/40"
             >
                 { isDeleting ? "Deleting..." : "Delete Account" }
             </button>
-            { error && <p role="alert" className="w-full text-center text-sm text-red-600">{ error }</p> }
+            { error && <p role="alert" className="mt-2 w-full text-center text-sm text-red-600 dark:text-red-400">{ error }</p> }
         </>
     );
 }
