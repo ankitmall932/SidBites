@@ -22,6 +22,30 @@ export const getType = async () =>
     }
 };
 
+export const getItemById = async ( id: string ) =>
+{
+    try
+    {
+        const result = await prisma.items.findMany( {
+            where: {
+                typeId: id
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        } );
+        return {
+            success: true,
+            data: result
+        };
+    } catch ( error )
+    {
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Something went wrong'
+        };
+    }
+};
 
 export const getAllItems = async () =>
 {
