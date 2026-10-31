@@ -1,9 +1,10 @@
+import AllItems from "./AllItems";
 
-export default function page() {
+export default function page ()
+{
   return (
     <div>
-        <h1>This is your Items page</h1>
+      <AllItems />
     </div>
-  )
+  );
 }
- 
