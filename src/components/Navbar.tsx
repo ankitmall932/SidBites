@@ -36,16 +36,16 @@ export default function Navbar ( { session }: { session: Session | null; } )
     const user = session?.user;
     const isAdmin = user?.admin === true;
     const accountHref = isAdmin ? "/admin/account" : "/user/account";
-    const items = isAdmin? adminItems : user ? [ ...publicItems, ...userItems ] : publicItems;
+    const items = isAdmin ? adminItems : user ? [ ...publicItems, ...userItems ] : publicItems;
 
     const linkClass = ( href: string ) => pathname === href
-        ? "text-blue-500 underline underline-offset-4"
-        : "hover:text-blue-500 hover:underline hover:underline-offset-4";
+        ? "text-orange-700 underline underline-offset-4 dark:text-orange-300"
+        : "hover:text-orange-700 hover:underline hover:underline-offset-4 dark:hover:text-orange-300";
 
     return (
         <nav className="relative flex min-h-15 w-full items-center justify-between rounded-2xl border border-white/30 bg-white/40 px-4 shadow-[0_0_25px_rgba(0,0,0,0.08)] backdrop-blur-2xl sm:px-5">
             <Link href={ isAdmin ? "/admin/dashboard" : "/" } aria-label="SidBites home">
-                <Image src="/SidLogo.png" width={ 150 } height={ 40 } alt="TaskHub" priority className="h-auto w-30 sm:w-37.5" />
+                <Image src="/SidLogo.png" width={ 150 } height={ 40 } alt="SidBites" priority className="h-auto w-30 sm:w-37.5" />
             </Link>
             <div className="flex flex-row gap-5">
                 <ThemeButton />
@@ -97,7 +97,7 @@ export default function Navbar ( { session }: { session: Session | null; } )
                     </svg>
                 </button>
                 { menuOpen && (
-                    <div id="mobile-navigation" className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 flex flex-col gap-2 rounded-2xl border border-white/30 bg-white/95 p-4 shadow-xl backdrop-blur-2xl lg:hidden">
+                    <div id="mobile-navigation" className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 flex flex-col gap-2 rounded-2xl border border-white/30 bg-white/95 dark:bg-black/90 dark:text-white p-4 shadow-xl backdrop-blur-2xl lg:hidden">
                         { user ? (
                             <>
                                 { items.map( ( item ) => (

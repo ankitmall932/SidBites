@@ -32,10 +32,10 @@ export default async function RootLayout ( { children }: LayoutProps<"/"> )
     >
       <body className="min-h-screen flex flex-col">
         <ThemeProvider>
-          <div className="fixed  top-4  sm:px-10 px-2 w-full">
+          <div className="fixed top-4 z-50 w-full px-2 sm:px-10">
             <Navbar session={ session } />
           </div>
-          <div className="sm:px-10 px-2 pt-25 h-full w-full pb-10 flex-1">
+          <div className="h-full w-full flex-1 px-2 pb-10 pt-28 sm:px-10">
             { children }
           </div>
           <div className="pb-5 sm:px-10 px-2 w-full">
