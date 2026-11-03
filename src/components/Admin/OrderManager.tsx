@@ -3,12 +3,13 @@
 import { advanceOrderStatus, cancelOrderByAdmin } from "@/app/actions/admin/customerOrderActions";
 import { useState } from "react";
 import { Ban, ChevronRight, Package } from "lucide-react";
+import type { PaymentStatus } from "@/generated/prisma/client";
 
 type AdminOrder = {
     id: string;
     status: "PENDING" | "PREPARING" | "OUT_FOR_DELIVERY" | "DELIVERED" | "CANCELLED";
     paymentMethod: "CASH_ON_DELIVERY" | "RAZORPAY";
-    paymentStatus: "UNPAID" | "PENDING" | "PAID" | "FAILED";
+    paymentStatus: PaymentStatus;
     total: string;
     createdAt: string;
     address: { houseNumber: string; addressLine: string; city: string; pincode: string; };
@@ -16,7 +17,7 @@ type AdminOrder = {
     items: { name: string; quantity: number; amount: string; unit: string; finalPrice: string; }[];
 };
 
-const statusLabels: Record<AdminOrder["status"], string> = {
+const statusLabels: Record<AdminOrder[ "status" ], string> = {
     PENDING: "Pending",
     PREPARING: "Preparing",
     OUT_FOR_DELIVERY: "Out for delivery",
@@ -24,7 +25,7 @@ const statusLabels: Record<AdminOrder["status"], string> = {
     CANCELLED: "Cancelled"
 };
 
-const nextStatus: Partial<Record<AdminOrder["status"], { label: string; next: AdminOrder["status"]; }>> = {
+const nextStatus: Partial<Record<AdminOrder[ "status" ], { label: string; next: AdminOrder[ "status" ]; }>> = {
     PENDING: { label: "Start preparing", next: "PREPARING" },
     PREPARING: { label: "Out for delivery", next: "OUT_FOR_DELIVERY" },
     OUT_FOR_DELIVERY: { label: "Mark delivered", next: "DELIVERED" }
@@ -142,7 +143,7 @@ export default function OrderManager ( { initialOrders }: { initialOrders: Admin
                                 </p>
                                 <address className="text-xs not-italic leading-5 text-stone-600 dark:text-stone-300">
                                     { order.address.houseNumber }, { order.address.addressLine }<br />
-                                    { order.address.city}, { order.address.pincode }
+                                    { order.address.city }, { order.address.pincode }
                                 </address>
                                 { order.status === "CANCELLED" && order.paymentStatus === "PAID" && (
                                     <p className="text-xs font-medium text-amber-700 dark:text-amber-300">
