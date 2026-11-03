@@ -2,7 +2,7 @@
 
 import { getSession } from "@/lib/auth/getSession";
 import { prisma } from "@/lib/db/prisma";
-import cloudinary from "@/lib/storage/cloudinary";
+import cloudinary from "@/lib/store/cloudinary";
 import { createItemSchema } from "@/lib/validations/items";
 import { redirect } from "next/navigation";
 

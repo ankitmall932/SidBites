@@ -1,11 +1,15 @@
 import { getItemById } from "@/app/actions/publicAction";
+import { getWishlistItemIds } from "@/app/actions/user/wishlistAction";
 import { BadgePercent, Package } from "lucide-react";
 import Image from "next/image";
+import CartQuantityControl from "@/components/Cart/CartQuantityControl";
+import DiscountedPrice from "@/components/DiscountedPrice";
+import WishlistButton from "@/components/Wishlist/WishlistButton";
 
 export default async function CategoryPage ( { params }: { params: Promise<{ id: string; }>; } )
 {
     const { id } = await params;
-    const response = await getItemById( id );
+    const [ response, wishlistResponse ] = await Promise.all( [ getItemById( id ), getWishlistItemIds() ] );
 
     if ( !response.success )
     {
@@ -19,9 +23,15 @@ export default async function CategoryPage ( { params }: { params: Promise<{ id:
     }
 
     const items = response.data ?? [];
+    const wishlistIds = wishlistResponse.success ? new Set( wishlistResponse.data ) : new Set<string>();
 
     return (
         <main className="mx-auto max-w-6xl space-y-4 text-stone-900 dark:text-stone-100">
+            { !wishlistResponse.success && (
+                <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 px-5 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">
+                    Unable to load wishlist status: { wishlistResponse.message }
+                </div>
+            ) }
             <div className="flex items-end justify-between gap-3">
                 <div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-orange-700 dark:text-orange-300">Category</p>
@@ -56,13 +66,28 @@ export default async function CategoryPage ( { params }: { params: Promise<{ id:
                                         { item.discount.toString() }% off
                                     </span>
                                 ) : null }
+                                <div className="absolute right-1.5 top-1.5">
+                                    <WishlistButton itemId={ item.id } initialSaved={ wishlistIds.has( item.id ) } />
+                                </div>
                             </div>
                             <div className="space-y-0.5 p-2">
                                 <h2 className="truncate text-xs font-semibold sm:text-sm">{ item.name }</h2>
                                 <p className="text-[11px] text-stone-500 dark:text-stone-400">
                                     { item.quantity.toString() } { item.unit }
                                 </p>
-                                <p className="pt-0.5 text-xs font-bold text-orange-700 dark:text-orange-300">₹{ item.price.toString() }</p>
+                                <div className="flex items-center justify-between gap-1 pt-0.5">
+                                    <DiscountedPrice price={ item.price.toString() } discount={ item.discount?.toString() ?? null } className="text-xs font-bold text-orange-700 dark:text-orange-300" />
+                                    <CartQuantityControl item={ {
+                                        id: item.id,
+                                        name: item.name,
+                                        price: item.price.toString(),
+                                        amount: item.quantity.toString(),
+                                        unit: item.unit,
+                                        stockQuantity: item.stockQuantity,
+                                        imageUrl: item.imageUrl,
+                                        discount: item.discount?.toString() ?? null
+                                    } } />
+                                </div>
                             </div>
                         </article>
                     ) ) }

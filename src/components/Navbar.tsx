@@ -6,12 +6,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import ThemeButton from "./Theme/Button";
+import { Heart, ShoppingCart } from "lucide-react";
+import { useCartStore } from "@/lib/hooks/useCartStore";
+import { useWishlistStore } from "@/lib/hooks/useWishlistStore";
 
 type Session = typeof auth.$Infer.Session;
 
 const adminItems = [
     { label: "Types", href: "/admin/type" },
     { label: "Items", href: "/admin/items" },
+    { label: "Customers", href: "/admin/customer" },
+    { label: "Orders", href: "/admin/orders" },
 ];
 
 const publicItems = [
@@ -22,8 +27,7 @@ const publicItems = [
 ];
 
 const userItems = [
-    { label: "Wishlist", href: "/user/wishlist" },
-    { label: "Cart", href: "/user/cart" },
+    { label: "Addresses", href: "/user/addresses" },
     { label: "Orders", href: "/user/orders" },
 ];
 
@@ -31,6 +35,8 @@ export default function Navbar ( { session }: { session: Session | null; } )
 {
     const pathname = usePathname();
     const [ menuOpen, setMenuOpen ] = useState( false );
+    const { itemCount: cartCount } = useCartStore();
+    const { itemCount: wishlistCount } = useWishlistStore();
     const userName = session?.user?.name?.[ 0 ]?.toUpperCase() ?? 'U';
     const image = session?.user?.image;
     const user = session?.user;
@@ -41,6 +47,36 @@ export default function Navbar ( { session }: { session: Session | null; } )
     const linkClass = ( href: string ) => pathname === href
         ? "text-orange-700 underline underline-offset-4 dark:text-orange-300"
         : "hover:text-orange-700 hover:underline hover:underline-offset-4 dark:hover:text-orange-300";
+    const cartLink = (
+        <Link
+            href="/user/cart"
+            aria-label={ `Open cart${ cartCount > 0 ? `, ${ cartCount } items` : "" }` }
+            title="Cart"
+            className={ `relative inline-flex h-10 w-10 items-center justify-center rounded-lg transition hover:bg-black/5 ${ linkClass( "/user/cart" ) }` }
+        >
+            <ShoppingCart aria-hidden="true" size={ 22 } />
+            { cartCount > 0 && (
+                <span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-orange-600 px-1 text-[10px] font-bold leading-none text-white">
+                    { cartCount }
+                </span>
+            ) }
+        </Link>
+    );
+    const wishlistLink = (
+        <Link
+            href="/user/wishlist"
+            aria-label={ `Open wishlist${ wishlistCount > 0 ? `, ${ wishlistCount } items` : "" }` }
+            title="Wishlist"
+            className={ `relative inline-flex h-10 w-10 items-center justify-center rounded-lg transition hover:bg-black/5 ${ linkClass( "/user/wishlist" ) }` }
+        >
+            <Heart aria-hidden="true" size={ 22 } />
+            { wishlistCount > 0 && (
+                <span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-bold leading-none text-white">
+                    { wishlistCount }
+                </span>
+            ) }
+        </Link>
+    );
 
     return (
         <nav className="relative flex min-h-15 w-full items-center justify-between rounded-2xl border border-white/30 bg-white/40 px-4 shadow-[0_0_25px_rgba(0,0,0,0.08)] backdrop-blur-2xl sm:px-5">
@@ -57,6 +93,8 @@ export default function Navbar ( { session }: { session: Session | null; } )
                                     { item.label }
                                 </Link>
                             ) ) }
+                            { !isAdmin && wishlistLink }
+                            { !isAdmin && cartLink }
                             <Link href={ accountHref } aria-label="Open account" className="inline-flex items-center justify-center overflow-hidden rounded-full shadow-sm ring-2 ring-white/80" >
                                 { image ? (
                                     <Image src={ image } alt="Account avatar" width={ 40 } height={ 40 } className="h-10 w-10 rounded-full object-cover" />
@@ -104,6 +142,12 @@ export default function Navbar ( { session }: { session: Session | null; } )
                                     <Link key={ item.href } className={ `rounded-lg px-3 py-2 ${ linkClass( item.href ) }` } href={ item.href }
                                         onClick={ () => setMenuOpen( false ) } >{ item.label } </Link>
                                 ) ) }
+                                { !isAdmin && (
+                                    <div className="flex items-center gap-2 border-y border-black/10 py-2 dark:border-white/10">
+                                        { wishlistLink }
+                                        { cartLink }
+                                    </div>
+                                ) }
                                 <Link href={ accountHref } className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-black/5"
                                     onClick={ () => setMenuOpen( false ) } >
                                     { image ? (
