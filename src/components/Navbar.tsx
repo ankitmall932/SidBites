@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ThemeButton from "./Theme/Button";
 import { Heart, ShoppingCart } from "lucide-react";
 import { useCartStore } from "@/lib/hooks/useCartStore";
@@ -35,6 +35,8 @@ export default function Navbar ( { session }: { session: Session | null; } )
 {
     const pathname = usePathname();
     const [ menuOpen, setMenuOpen ] = useState( false );
+    const menuRef = useRef<HTMLDivElement>( null );
+    const menuButtonRef = useRef<HTMLButtonElement>( null );
     const { itemCount: cartCount } = useCartStore();
     const { itemCount: wishlistCount } = useWishlistStore();
     const userName = session?.user?.name?.[ 0 ]?.toUpperCase() ?? 'U';
@@ -43,6 +45,35 @@ export default function Navbar ( { session }: { session: Session | null; } )
     const isAdmin = user?.admin === true;
     const accountHref = isAdmin ? "/admin/account" : "/user/account";
     const items = isAdmin ? adminItems : user ? [ ...publicItems, ...userItems ] : publicItems;
+
+    useEffect( () =>
+    {
+        if ( !menuOpen ) return;
+
+        const closeOnOutsideClick = ( event: PointerEvent ) =>
+        {
+            if (
+                event.target instanceof Node
+                && !menuRef.current?.contains( event.target )
+                && !menuButtonRef.current?.contains( event.target )
+            )
+            {
+                setMenuOpen( false );
+            }
+        };
+        const closeOnEscape = ( event: KeyboardEvent ) =>
+        {
+            if ( event.key === "Escape" ) setMenuOpen( false );
+        };
+
+        document.addEventListener( "pointerdown", closeOnOutsideClick );
+        document.addEventListener( "keydown", closeOnEscape );
+        return () =>
+        {
+            document.removeEventListener( "pointerdown", closeOnOutsideClick );
+            document.removeEventListener( "keydown", closeOnEscape );
+        };
+    }, [ menuOpen ] );
 
     const linkClass = ( href: string ) => pathname === href
         ? "text-orange-700 underline underline-offset-4 dark:text-orange-300"
@@ -53,6 +84,7 @@ export default function Navbar ( { session }: { session: Session | null; } )
             aria-label={ `Open cart${ cartCount > 0 ? `, ${ cartCount } items` : "" }` }
             title="Cart"
             className={ `relative inline-flex h-10 w-10 items-center justify-center rounded-lg transition hover:bg-black/5 ${ linkClass( "/user/cart" ) }` }
+            onClick={ () => setMenuOpen( false ) }
         >
             <ShoppingCart aria-hidden="true" size={ 22 } />
             { cartCount > 0 && (
@@ -68,6 +100,7 @@ export default function Navbar ( { session }: { session: Session | null; } )
             aria-label={ `Open wishlist${ wishlistCount > 0 ? `, ${ wishlistCount } items` : "" }` }
             title="Wishlist"
             className={ `relative inline-flex h-10 w-10 items-center justify-center rounded-lg transition hover:bg-black/5 ${ linkClass( "/user/wishlist" ) }` }
+            onClick={ () => setMenuOpen( false ) }
         >
             <Heart aria-hidden="true" size={ 22 } />
             { wishlistCount > 0 && (
@@ -119,6 +152,7 @@ export default function Navbar ( { session }: { session: Session | null; } )
                 </div>
 
                 <button
+                    ref={ menuButtonRef }
                     type="button"
                     className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-800 transition hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black lg:hidden"
                     aria-label={ menuOpen ? "Close navigation menu" : "Open navigation menu" }
@@ -135,7 +169,7 @@ export default function Navbar ( { session }: { session: Session | null; } )
                     </svg>
                 </button>
                 { menuOpen && (
-                    <div id="mobile-navigation" className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 flex flex-col gap-2 rounded-2xl border border-white/30 bg-white/95 dark:bg-black/90 dark:text-white p-4 shadow-xl backdrop-blur-2xl lg:hidden">
+                    <div ref={ menuRef } id="mobile-navigation" className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 flex flex-col gap-2 rounded-2xl border border-white/30 bg-white/95 dark:bg-black/90 dark:text-white p-4 shadow-xl backdrop-blur-2xl lg:hidden">
                         { user ? (
                             <>
                                 { items.map( ( item ) => (
